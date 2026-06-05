@@ -142,73 +142,70 @@ export default function AlbumDetallePage() {
       </header>
 
       {/* Libro */}
-      <main className="flex-1 flex flex-col items-center justify-center px-2 py-4 gap-4">
-        <div
-          className="w-full max-w-5xl flex shadow-2xl rounded-2xl overflow-hidden"
-          style={{
-            opacity: transicionando ? 0 : 1,
-            transform: transicionando
-              ? `translateX(${direccion === 'derecha' ? '-20px' : '20px'})`
-              : 'translateX(0)',
-            transition: 'opacity 0.15s ease, transform 0.15s ease',
-          }}
-        >
-            {/* Página izquierda */}
-            <div className="flex-1 bg-card border-r border-border/50 p-4 relative">
-              {/* Textura de página */}
-              <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
-                style={{
-                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(255,255,255,0.1) 28px, rgba(255,255,255,0.1) 29px)',
-                }}
-              />
+<main className="flex-1 flex flex-col items-center justify-center px-1 sm:px-2 py-2 sm:py-4 gap-3 sm:gap-4">
+  <div
+    className="w-full max-w-5xl flex flex-col sm:flex-row shadow-2xl rounded-2xl overflow-hidden"
+    style={{
+      opacity: transicionando ? 0 : 1,
+      transform: transicionando
+        ? `translateX(${direccion === 'derecha' ? '-20px' : '20px'})`
+        : 'translateX(0)',
+      transition: 'opacity 0.15s ease, transform 0.15s ease',
+    }}
+  >
+    {/* Página izquierda */}
+    <div className="flex-1 bg-card border-b sm:border-b-0 sm:border-r border-border/50 p-2 sm:p-4 relative">
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(255,255,255,0.1) 28px, rgba(255,255,255,0.1) 29px)',
+        }}
+      />
 
-              {/* Número de página */}
-              <p className="text-xs text-muted-foreground text-left mb-3 font-medium">
-                {paginaIzq + 1}
-              </p>
+      <p className="text-[10px] sm:text-xs text-muted-foreground text-left mb-2 sm:mb-3 font-medium">
+        {paginaIzq + 1}
+      </p>
 
-              {/* Grid 3x3 */}
-              <div className="grid grid-cols-3 gap-5">
-                {cartasIzq.map(({ posicion, entrada }) => (
-                  <CartaSlot
-                    key={posicion}
-                    posicion={posicion}
-                    entrada={entrada}
-                    onClick={() => entrada && setCartaSeleccionada(entrada)}
-                    esNueva={entrada ? idsNuevos.includes(entrada.carta.id) : false}
-                  />
-                ))}
-              </div>
-            </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-5">
+        {cartasIzq.map(({ posicion, entrada }) => (
+          <CartaSlot
+            key={posicion}
+            posicion={posicion}
+            entrada={entrada}
+            onClick={() => entrada && setCartaSeleccionada(entrada)}
+            esNueva={entrada ? idsNuevos.includes(entrada.carta.id) : false}
+          />
+        ))}
+      </div>
+    </div>
 
-            {/* Lomo del libro */}
-            <div className="w-4 bg-gradient-to-r from-black/20 via-black/5 to-black/20 shrink-0" />
+    {/* Lomo del libro - oculto en móvil */}
+    <div className="hidden sm:block w-4 bg-gradient-to-r from-black/20 via-black/5 to-black/20 shrink-0" />
 
-            {/* Página derecha */}
-            <div className="flex-1 bg-card border-l border-border/50 p-4 relative">
-              <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
-                style={{
-                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(255,255,255,0.1) 28px, rgba(255,255,255,0.1) 29px)',
-                }}
-              />
+    {/* Página derecha */}
+    <div className="flex-1 bg-card sm:border-l border-border/50 p-2 sm:p-4 relative">
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(255,255,255,0.1) 28px, rgba(255,255,255,0.1) 29px)',
+        }}
+      />
 
-              <p className="text-xs text-muted-foreground text-right mb-3 font-medium">
-                {paginaDer + 1}
-              </p>
+      <p className="text-[10px] sm:text-xs text-muted-foreground text-right mb-2 sm:mb-3 font-medium">
+        {paginaDer + 1}
+      </p>
 
-              <div className="grid grid-cols-3 gap-5">
-                {cartasDer.map(({ posicion, entrada }) => (
-                  <CartaSlot
-                    key={posicion}
-                    posicion={posicion}
-                    entrada={entrada}
-                    onClick={() => entrada && setCartaSeleccionada(entrada)}
-                    esNueva={entrada ? idsNuevos.includes(entrada.carta.id) : false}
-                  />
-                ))}
-              </div>
-            </div>
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-5">
+        {cartasDer.map(({ posicion, entrada }) => (
+          <CartaSlot
+            key={posicion}
+            posicion={posicion}
+            entrada={entrada}
+            onClick={() => entrada && setCartaSeleccionada(entrada)}
+            esNueva={entrada ? idsNuevos.includes(entrada.carta.id) : false}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
 
         {/* Navegación */}
         <div className="flex items-center gap-6">
@@ -278,9 +275,15 @@ const RAREZA_CONIC: Record<string, string> = {
 }
 
 function CartaSlot({ posicion, entrada, onClick, esNueva = false }: CartaSlotProps) {
-  // Delay base de 0.6s (espera que termine la animacion del libro) 
-  // mas un pequeño escalonado segun posicion
   const delayNueva = 0.6 + (posicion % 9) * 0.08
+  const [esMobile, setEsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setEsMobile(window.innerWidth < 640)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   return (
     <motion.div
@@ -293,13 +296,15 @@ function CartaSlot({ posicion, entrada, onClick, esNueva = false }: CartaSlotPro
           ? { type: 'spring', stiffness: 300, damping: 18, delay: delayNueva }
           : {}
       }
-      className={`aspect-[3/5] rounded-lg cursor-pointer relative ${
+      className={`rounded-lg cursor-pointer relative ${
         entrada ? 'shadow-md' : 'bg-secondary/20 border border-border/20'
       }`}
+      style={{
+        aspectRatio: '3/5',
+      }}
     >
       {entrada ? (
         <>
-          {/* Borde animado */}
           <style>{`
             @keyframes rotar-borde {
               from { --angle: 0deg; }
@@ -328,26 +333,31 @@ function CartaSlot({ posicion, entrada, onClick, esNueva = false }: CartaSlotPro
               className="absolute inset-0 w-full h-full object-cover object-top"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-1">
-              <p className="text-white text-[8px] font-bold truncate leading-tight">
+            
+            {/* Nombre de la carta - más pequeño en móvil */}
+            <div className={`absolute bottom-0 left-0 right-0 ${esMobile ? 'p-0.5' : 'p-1'}`}>
+              <p className={`text-white font-bold truncate leading-tight ${esMobile ? 'text-[7px]' : 'text-[8px] sm:text-[9px]'}`}>
                 {entrada.carta.nombre}
               </p>
             </div>
 
-            {/* Badge nueva */}
+            {/* Badge nueva - más pequeño en móvil */}
             {esNueva && (
               <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: delayNueva + 0.3, type: 'spring', stiffness: 400 }}
-                className="absolute top-1 left-1 bg-green-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full"
+                className={`absolute bg-green-500 text-white font-bold rounded-full ${
+                  esMobile 
+                    ? 'top-0.5 left-0.5 text-[6px] px-0.5 py-0.5' 
+                    : 'top-0.5 left-0.5 sm:top-1 sm:left-1 text-[7px] sm:text-[8px] px-1 py-0.5'
+                }`}
               >
                 NEW
               </motion.div>
             )}
           </div>
 
-          {/* Efecto de destello al aparecer */}
           {esNueva && (
             <motion.div
               initial={{ opacity: 0.8 }}
@@ -359,8 +369,10 @@ function CartaSlot({ posicion, entrada, onClick, esNueva = false }: CartaSlotPro
         </>
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center gap-1">
-          <span className="text-xl opacity-20">?</span>
-          <span className="text-[8px] text-muted-foreground opacity-50">#{posicion}</span>
+          <span className={`${esMobile ? 'text-base' : 'text-lg sm:text-xl'} opacity-20`}>?</span>
+          <span className={`${esMobile ? 'text-[6px]' : 'text-[7px] sm:text-[8px]'} text-muted-foreground opacity-50`}>
+            #{posicion}
+          </span>
         </div>
       )}
     </motion.div>

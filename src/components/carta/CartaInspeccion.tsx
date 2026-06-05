@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import type { CartaData } from './CartaComponent'
 
@@ -27,7 +27,18 @@ interface Props {
 
 export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }: Props) {
   const [volteada, setVolteada] = useState(false)
+  const [esMobile, setEsMobile] = useState(false)
   const config = RAREZA_CONFIG[carta.rareza]
+
+  useEffect(() => {
+    const checkMobile = () => setEsMobile(window.innerWidth < 640)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  const tamanioCarta = esMobile ? 200 : 260
+  const alturaCarta = esMobile ? 320 : 420
 
   return (
     <motion.div
@@ -35,14 +46,14 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onCerrar}
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center px-4"
+      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center px-4 py-4 sm:py-0 overflow-y-auto"
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
         onClick={(e) => e.stopPropagation()}
-        className="flex flex-col sm:flex-row items-center gap-30 max-w-2xl w-full"
+        className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 w-full max-w-2xl"
       >
         {/* Carta 3D */}
         <div
@@ -55,8 +66,8 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
             transition={{ duration: 0.6, ease: 'easeInOut' }}
             style={{
               transformStyle: 'preserve-3d',
-              width: '260px',
-              height: '420px',
+              width: `${tamanioCarta}px`,
+              height: `${alturaCarta}px`,
               willChange: 'transform',
             }}
             className="relative"
@@ -66,7 +77,6 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
               className="absolute inset-0 rounded-2xl overflow-hidden"
               style={{ backfaceVisibility: 'hidden' }}
             >
-              {/* Borde gradiente */}
               <div
                 className="absolute inset-0 rounded-2xl"
                 style={{
@@ -81,11 +91,9 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
                   alt={carta.nombre}
                   className="w-full h-full object-cover"
                 />
-                {/* Gradiente inferior */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                {/* Nombre en la carta */}
                 <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <p className="text-white text-xs font-bold truncate">{carta.nombre}</p>
+                  <p className="text-white text-xs sm:text-sm font-bold truncate">{carta.nombre}</p>
                 </div>
               </div>
             </div>
@@ -103,7 +111,7 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
                   animation: 'arcoiris 4s ease-in-out infinite',
                 }}
               />
-              <div className="absolute inset-[2px] rounded-2xl overflow-hidden">
+              <div className="absolute inset-[2px] rounded-2xl overflow-hidden bg-gray-900">
                 {carta.imagenReversoUrl ? (
                   <img
                     src={carta.imagenReversoUrl}
@@ -111,7 +119,7 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gray-900 flex items-center justify-center">
+                  <div className="w-full h-full flex items-center justify-center">
                     <div className="text-center">
                       <p className="text-4xl mb-2">✦</p>
                       <p className="text-muted-foreground text-xs">Sin reverso</p>
@@ -122,23 +130,26 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
             </div>
           </motion.div>
 
-          {/* Hint voltear */}
           <p className="text-center text-muted-foreground text-xs mt-3">
-            {volteada ? 'Click para ver el frente' : 'Click para voltear'}
+            {volteada ? 'Toca para ver el frente' : 'Toca para voltear'}
           </p>
         </div>
 
-        {/* Info panel */}
-        <div className="flex-1 min-w-0">
+        {/* Info panel - scrollable en móvil */}
+        <div className="flex-1 min-w-0 max-h-[60vh] sm:max-h-none overflow-y-auto px-2 sm:px-0">
           {/* Nombre */}
-          <h2 className="text-2xl font-bold text-white mb-1">{carta.nombre}</h2>
-          <p className="text-muted-foreground text-sm mb-4">{carta.serie}</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center sm:text-left">
+            {carta.nombre}
+          </h2>
+          <p className="text-muted-foreground text-xs sm:text-sm mb-4 text-center sm:text-left">
+            {carta.serie}
+          </p>
 
           {/* Rareza */}
-          <div className="mb-4">
+          <div className="mb-4 text-center sm:text-left">
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Rareza</p>
             <p
-              className="font-bold text-lg"
+              className="font-bold text-base sm:text-lg inline-block"
               style={{
                 background: `linear-gradient(90deg, ${config.color}, #ffffff80, ${config.color})`,
                 backgroundSize: '200% 100%',
@@ -150,10 +161,9 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
             >
               {carta.rareza}
             </p>
-            {/* Estrellas */}
-            <div className="flex gap-1 mt-1">
+            <div className="flex gap-1 mt-1 justify-center sm:justify-start">
               {Array.from({ length: config.estrellas }).map((_, i) => (
-                <span key={i} className="text-lg" style={{ color: config.color }}>★</span>
+                <span key={i} className="text-base sm:text-lg" style={{ color: config.color }}>★</span>
               ))}
             </div>
           </div>
@@ -161,26 +171,26 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
           {/* Personaje */}
           <div className="mb-4">
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Personaje</p>
-            <p className="text-white text-sm font-medium">{carta.personaje}</p>
+            <p className="text-white text-sm sm:text-base font-medium">{carta.personaje}</p>
           </div>
 
           {/* Descripción */}
           {carta.descripcion && (
             <div className="mb-4">
               <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Descripción</p>
-              <p className="text-foreground/80 text-sm italic">"{carta.descripcion}"</p>
+              <p className="text-foreground/80 text-xs sm:text-sm italic">"{carta.descripcion}"</p>
             </div>
           )}
 
           {/* Badges */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-4 justify-center sm:justify-start">
             {carta.limitada && (
-              <span className="px-2 py-1 bg-amber-400/10 border border-amber-400/30 text-amber-400 text-xs font-medium rounded-lg">
+              <span className="px-2 py-1 bg-amber-400/10 border border-amber-400/30 text-amber-400 text-[10px] sm:text-xs font-medium rounded-lg">
                 ✦ Limitada
               </span>
             )}
             {carta.fueNueva && (
-              <span className="px-2 py-1 bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-medium rounded-lg">
+              <span className="px-2 py-1 bg-green-500/10 border border-green-500/30 text-green-400 text-[10px] sm:text-xs font-medium rounded-lg">
                 ✦ Nueva
               </span>
             )}
@@ -190,12 +200,12 @@ export default function CartaInspeccion({ carta, pegadaEn, posicion, onCerrar }:
           {(pegadaEn || posicion) && (
             <div className="pt-4 border-t border-border/50 space-y-1">
               {posicion && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground text-center sm:text-left">
                   Posición <span className="text-foreground">#{posicion}</span> en el álbum
                 </p>
               )}
               {pegadaEn && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground text-center sm:text-left">
                   Obtenida el{' '}
                   <span className="text-foreground">
                     {new Date(pegadaEn).toLocaleDateString('es-ES', {
